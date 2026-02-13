@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Auto-Calc",
+    "version": "1.0",
+    "description": "Создает калькуляцию в базе данных.",
+    "icons": {
+        "64": "/icons/icon64.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage",
+        "tabs",
+        "activeTab",
+        "alarms"
+    ]
+}
