@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            await localStorage.clear();
+            localStorage.clear();
 
             // Список распаршенных товаров
             await chrome.scripting.executeScript({
@@ -54,9 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 func: () => document.documentElement.outerHTML
             })
             .then(async (rawHTML) => {
-                res = await getelements(rawHTML[0].result);
+                res = getelements(rawHTML[0].result);
+                localStorage.setItem("goods_import", res);
                 localStorage.setItem("goods_list", res);
-                showToast("Список товаров обновлён.", 1);
+                showToast("Список товаров обновлён.", true);
             })
 
         } catch(err) {
@@ -65,12 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     });
-    btnEdit.addEventListener('click', () => {
+    btnEdit.addEventListener('click', async () => {
         // alert('Функция "Редактировать" будет доступна в полной версии расширения');
         try {
-
+            var gds = localStorage.getItem("goods_list");
+            
         } catch(err) {
-
+            console.error("❌ Ошибка:", err.message);
+            alert(`Ошибка: ${err.message}`);
         }
     });
 
@@ -80,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function showToast(HTMLmessage, is_good_toast, duration = 1500) {
+function showToast(HTMLmessage, is_good_toast, duration=1500) {
     // Отменяем все предыдущие действия
     if (toastTimeout) clearTimeout(toastTimeout);
     if (hideTimeout) clearTimeout(hideTimeout);
@@ -123,7 +126,6 @@ function getelements(html_str) {
     const doc = parser.parseFromString(html_str, 'text/html');
     const cartRows = doc.querySelectorAll('.src-features-cart-components-CartItemNew-__style__centerBlock__VUSGz');
 
-
     cartRows.forEach((block) => {
         aggregatedArray = aggregate(block);
         items.push(aggregatedArray);
@@ -132,19 +134,19 @@ function getelements(html_str) {
 }
 
 function aggregate(block) {
-    const nameEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__name__px5+y');
-    const brandEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__brand__eb6TV');
-    const partNumberEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__partsNumber__yDq9v');
-    const overpriceEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__overprice__C7Mb3');
-    const defaultPriceEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__defaultPrice__wmMef');
-    const countEl = block.querySelector('.src-features-cart-components-CartItemNew-__style__input__I2zVG').value;
+    const nameEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__name__px5+y')[0].innerText || null;
+    const brandEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__brand__eb6TV')[0].innerText || null;
+    const partNumberEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__partsNumber__yDq9v')[0].innerText || null;
+    const overpriceEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__overprice__C7Mb3')[0].innerText || null;
+    const defaultPriceEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__defaultPrice__wmMef')[0].innerText || null;
+    const countEl = block.querySelector('.src-features-cart-components-CartItemNew-__style__input__I2zVG').value || null;
     
     const newArray = [
-        nameEl[0].innerText,
-        brandEl[0].innerText,
-        partNumberEl[0].innerText,
-        overpriceEl[0].innerText,
-        defaultPriceEl[0].innerText,
+        nameEl,
+        brandEl,
+        partNumberEl,
+        overpriceEl,
+        defaultPriceEl,
         countEl
     ];
     return newArray;
