@@ -1,3 +1,5 @@
+const REQUIRED_URL = "about:debugging#/runtime/this-firefox";
+
 document.addEventListener('DOMContentLoaded', () => {
     const helpBtn = document.getElementById('helpBtn');
     const tutorialOverlay = document.getElementById('tutorialOverlay');
@@ -26,10 +28,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    
     btnAdd.addEventListener('click', () => {
-        alert('Функция "Добавить" будет доступна в полной версии расширения');
-        // TODO
+        chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
+            const tab = tabs[0];
+            try {
+                // Проверка правильности вкладки
+                if (tab.url !== REQUIRED_URL) {throw new Error("не та страница");}
+
+                chrome.runtime.sendMessage({ action: "getFullHTML" }, (fullHTML) => {
+                    chrome.runtime.sendMessage({ action: "parseHTML", HTML: fullHTML }, (HTML) => {
+                        alert(`success ${HTML}`)
+                    })
+                })
+            } catch(err){
+                console.error("❌ Ошибка:", err.message);
+                alert(`Ошибка: ${err.message}`);
+            }
+        })
     });
     
     document.querySelector('.btn-edit').addEventListener('click', () => {

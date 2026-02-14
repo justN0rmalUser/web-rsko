@@ -11,7 +11,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 13px;
+    padding: 5px;
 }
 
 .container {
@@ -37,8 +37,8 @@ body {
 
 .help-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -69,16 +69,17 @@ body {
 h1 {
     text-align: center;
     color: #1a1a1a;
-    margin: 10px 0 20px;
+    margin: -4px 0 20px;
     font-weight: 700;
-    font-size: 19px;
-    letter-spacing: -0.3px;
+    font-size: 20px;
+    letter-spacing: 1px;
 }
 
 .subtitle {
     text-align: center;
     color: #555;
-    margin-bottom: 23px;
+    margin-top: -10px;
+    margin-bottom: 15px;
     line-height: 1.5;
     font-size: 13px;
 }
@@ -184,7 +185,7 @@ h1 {
 .tutorial-content {
     background-color: white;
     border-radius: 11px;
-    width: 90%;
+    width: 100%;
     max-width: 333px;
     padding: 20px;
     position: relative;
@@ -199,10 +200,10 @@ h1 {
 
 .close-tutorial {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 24px;
-    height: 24px;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background-color: #f1f1f1;
     border: none;
@@ -246,7 +247,7 @@ h1 {
 
 .highlight {
     background-color: #fff2f2;
-    padding: 17px;
+    padding: 10px;
     border-radius: 8px;
     margin: 13px 0;
     border-left: 3px solid #ff4500;
@@ -308,7 +309,7 @@ h1 {
     }
     
     .tutorial-content {
-        padding: 15px;
+        padding: 10px;
         max-width: 280px;
     }
 }

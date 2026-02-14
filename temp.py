@@ -31,6 +31,7 @@ class RosskoCartParser:
         Returns:
             Список словарей с информацией о товарах
         """
+        
         if not self.soup:
             self.soup = BeautifulSoup(self.html_content, 'html.parser')
         

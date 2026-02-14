@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расширение для парсинга данных</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <button class="help-btn" id="helpBtn">?</button>
+        <h1>AUTO-DOCUMENT</h1>
+        <p class="subtitle">Инструмент для извлечения и отправки данных в AutoDealer</p>
+        
+        <div class="button-group">
+            <button class="btn btn-add" id="btn-add">Добавить</button>
+            <button class="btn btn-edit" id="btn-edit">Редактировать</button>
+        </div>
+        
+        <button class="btn btn-send" id="btn-send">Отправить</button>
+        
+        <p class="extension-name">Версия 1.0 • Расширение для <b>Chrome</b> и <b>Firefox</b></p>
+    </div>
+    
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-content">
+            <button class="close-tutorial" id="closeTutorial">✕</button>
+            <h2 class="tutorial-title">Обучение использованию</h2>
+            <div class="tutorial-steps">
+                <p>Расширение извлекает товары с <a href="https://vk.com/al_feed.php"><b>корзины Rossko</b></a> и отправлять их в AutoDealer для создания калькуляции.</p>
+                
+                <ol>
+                    <li><strong>Добавить</strong> – добавить все товары с сайта Rossko в список</li>
+                    <li><strong>Редактировать</strong> – изменить список товаров, которые попадут в документ</li>
+                    <li><strong>Отправить</strong> – наименовать документ и отправить данные на сервер</li>
+                </ol>
+                
+                <div class="highlight">
+                    <p>⚠️ Перед использованием убедитесь, что вы находитесь на нужной странице сайта.
+                        <b>Иначе расширение не работает!!!</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

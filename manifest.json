@@ -7,12 +7,15 @@
         "64": "/icons/icon64.png"
     },
     "action": {
-        "default_popup": "popup.html"
+        "default_popup": "popup\\popup.html"
     },
     "permissions": [
-        "storage",
+        "scripting",
         "tabs",
         "activeTab",
         "alarms"
-    ]
+    ],
+    "background": {
+        "service_worker": "scripts\\getHTML.js"
+    }
 }
