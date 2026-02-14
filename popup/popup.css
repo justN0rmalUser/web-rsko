@@ -313,3 +313,95 @@ h1 {
         max-width: 280px;
     }
 }
+
+@keyframes toastBounceIn {
+    0% {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+    50% {
+        transform: translateX(-50%) translateY(-10px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}
+
+.bad-toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* начальное положение */
+    background-color: rgb(250, 187, 187);
+    color: #e60000;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-color: #e60000;
+    box-shadow: 0 4px 12px rgba(230, 0, 0, 0.4);
+    z-index: 10000;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+    cursor: default;
+
+    /* Скрыто по умолчанию */
+    opacity: 0;
+    visibility: hidden;
+}
+
+.bad-toast-notification.show {
+    visibility: visible;
+    animation: toastBounceIn 0.6s ease-out forwards;
+}
+
+.bad-toast-notification.hiding {
+    visibility: visible;
+    animation: toastFadeOut 0.3s ease-in forwards;
+}
+
+.good-toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* начальное положение */
+    background-color: rgb(188, 252, 179);
+    color: #25e100;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-color: #7ff445;
+    box-shadow: 0 4px 12px rgba(0, 104, 17, 0.4);
+    z-index: 10000;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+    cursor: default;
+
+    /* Скрыто по умолчанию */
+    opacity: 0;
+    visibility: hidden;
+}
+
+.good-toast-notification.show {
+    visibility: visible;
+    animation: toastBounceIn 0.6s ease-out forwards;
+}
+
+.good-toast-notification.hiding {
+    visibility: visible;
+    animation: toastFadeOut 0.3s ease-in forwards;
+}

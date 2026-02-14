@@ -1,4 +1,8 @@
-const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html";
+const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; // FIXME
+
+let toastTimeout = null;
+let hideTimeout = null;
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const helpBtn = document.getElementById('helpBtn');
@@ -38,41 +42,73 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Проверка правильности вкладки
             if (tab.url !== REQUIRED_URL || !tab) {
-                throw new Error(`Не та вкладка ${tab.url}`);
+                showToast("Это не корзина Rossko!", 0);
+                return;
             }
             
+            await localStorage.clear();
+
             // Список распаршенных товаров
-            const gdsList = await chrome.scripting.executeScript({
+            await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: () => document.documentElement.outerHTML
             })
             .then(async (rawHTML) => {
                 res = await getelements(rawHTML[0].result);
-                return res
+                localStorage.setItem("goods_list", res);
+                showToast("Список товаров обновлён.", 1);
             })
 
-            console.log(`Проверка: ${gdsList}`);
-            for (card of gdsList) {
-                console.log(`товар: ${card}`);
-                for (section of card) {
-                    console.log(section);
-                }
-            }
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
             alert(`Ошибка: ${err.message}`);
         }
+
     });
-    document.querySelector('.btn-edit').addEventListener('click', () => {
+    btnEdit.addEventListener('click', () => {
         alert('Функция "Редактировать" будет доступна в полной версии расширения');
         // TODO
     });
-    document.querySelector('.btn-send').addEventListener('click', () => {
+    btnSend.addEventListener('click', () => {
         alert('Функция "Отправить" будет доступна в полной версии расширения');
         // TODO
     });
 });
 
+function showToast(message, is_good_toast, duration = 1500) {
+    // Отменяем все предыдущие действия
+    if (toastTimeout) clearTimeout(toastTimeout);
+    if (hideTimeout) clearTimeout(hideTimeout);
+
+    let toast = is_good_toast ? document.querySelector('.good-toast-notification') : document.querySelector('.bad-toast-notification');
+
+    const msgEl = toast.querySelector('.toast-message');
+    msgEl.textContent = message;
+
+    // Сбрасываем классы и состояние
+    toast.classList.remove('show');
+    toast.classList.remove('hiding');
+    toast.style.visibility = 'hidden'; // гарантируем скрытие
+
+    void toast.offsetWidth; // reflow
+
+    // Показываем
+    toast.classList.add('show');
+    toast.style.visibility = 'visible';
+
+    // Планируем скрытие
+    hideTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+        toast.classList.add('hiding');
+
+        // После анимации скрытия — полностью прячем
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('hiding');
+            toast.style.visibility = 'hidden';
+            // опционально: можно оставить как есть для переиспользования
+        }, 300); // должно совпадать с длительностью fadeOut
+    }, duration);
+}
 
 function getelements(html_str) {
     var items = [];
