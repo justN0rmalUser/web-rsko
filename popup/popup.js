@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Проверка правильности вкладки
             if (tab.url !== REQUIRED_URL || !tab) {
-                showToast("Это не корзина Rossko!", 0);
+                showToast(`Это не корзина <b>Rossko</b>!`, false, 3000);
                 return;
             }
             
@@ -66,16 +66,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
     btnEdit.addEventListener('click', () => {
-        alert('Функция "Редактировать" будет доступна в полной версии расширения');
-        // TODO
+        // alert('Функция "Редактировать" будет доступна в полной версии расширения');
+        try {
+
+        } catch(err) {
+
+        }
     });
+
     btnSend.addEventListener('click', () => {
         alert('Функция "Отправить" будет доступна в полной версии расширения');
         // TODO
     });
 });
 
-function showToast(message, is_good_toast, duration = 1500) {
+function showToast(HTMLmessage, is_good_toast, duration = 1500) {
     // Отменяем все предыдущие действия
     if (toastTimeout) clearTimeout(toastTimeout);
     if (hideTimeout) clearTimeout(hideTimeout);
@@ -83,7 +88,8 @@ function showToast(message, is_good_toast, duration = 1500) {
     let toast = is_good_toast ? document.querySelector('.good-toast-notification') : document.querySelector('.bad-toast-notification');
 
     const msgEl = toast.querySelector('.toast-message');
-    msgEl.textContent = message;
+    msgEl.innerHTML = HTMLmessage;
+
 
     // Сбрасываем классы и состояние
     toast.classList.remove('show');

@@ -346,7 +346,7 @@ h1 {
     left: 50%;
     transform: translateX(-50%) translateY(100%); /* начальное положение */
     background-color: rgb(250, 187, 187);
-    color: #e60000;
+    color: #cf0202;
     padding: 12px 20px;
     border-radius: 8px;
     border-color: #e60000;
@@ -379,7 +379,7 @@ h1 {
     left: 50%;
     transform: translateX(-50%) translateY(100%); /* начальное положение */
     background-color: rgb(188, 252, 179);
-    color: #25e100;
+    color: #22c103;
     padding: 12px 20px;
     border-radius: 8px;
     border-color: #7ff445;

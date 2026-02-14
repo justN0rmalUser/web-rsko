@@ -15,5 +15,6 @@
         "activeTab",
         "alarms",
         "storage"
-    ]
+    ],
+    "host_permissions": ["https://*.rossko.ru/*", "https://rossko.ru/*"]
 }
