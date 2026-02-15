@@ -57,6 +57,39 @@
     animation: toastFadeOut 0.3s ease-in forwards;
 }
 
+.warn-toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* начальное положение */
+    background-color: rgb(255, 207, 168);
+    color: #cf7d02;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-color: #c96f01;
+    box-shadow: 0 4px 12px rgba(230, 188, 0, 0.4);
+    z-index: 10000;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+    cursor: default;
+
+    /* Скрыто по умолчанию */
+    opacity: 0;
+    visibility: hidden;
+}
+
+.warn-toast-notification.show {
+    visibility: visible;
+    animation: toastBounceIn 0.6s ease-out forwards;
+}
+
+.warn-toast-notification.hiding {
+    visibility: visible;
+    animation: toastFadeOut 0.3s ease-in forwards;
+}
+
 .good-toast-notification {
     position: fixed;
     bottom: 20px;

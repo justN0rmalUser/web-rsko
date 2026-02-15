@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Расширение для парсинга данных</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f8f8f8 0%, #d2c3c3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 10vh;
+            height: 341px;
+            width: 305px;
+            padding: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="../styles/maincontainer.css">
+    <link rel="stylesheet" href="../styles/tutorial.css">
+    <link rel="stylesheet" href="../styles/toaster.css">
+    <link rel="stylesheet" href="../styles/editcontainer.css">
+    <link rel="stylesheet" href="../styles/scroltable.css">
+    <link rel="stylesheet" href="../styles/sendcontainer.css">
+</head>
+<body>
+    <!-- Начальная страница -->
+    <div class="container">
+        <button class="help-btn" id="helpBtn">?</button>
+        <h1>AUTO-DOCUMENT</h1>
+        <p class="subtitle">Инструмент для извлечения и отправки данных в AutoDealer</p>
+        
+        <div class="button-group">
+            <button class="btn btn-add" id="btn-add">Добавить</button>
+            <button class="btn btn-edit" id="btn-edit">Просмотреть</button>
+        </div>
+        
+        <button class="btn btn-send" id="btn-send">Отправить</button>
+        
+        <p class="extension-name">Версия 1.0 • Расширение для <b>Chrome</b> и <b>Firefox</b></p>
+    </div>
+    
+    <!-- Туториал -->
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-content">
+            <button class="close-tutorial" id="closeTutorial">✕</button>
+            <h2 class="tutorial-title">Обучение использованию</h2>
+            <div class="tutorial-steps">
+                <p>Расширение извлекает товары с <a href="https://rossko.ru/cart/"><b>корзины Rossko</b></a> и отправлять их в AutoDealer для создания калькуляции.</p>
+                
+                <ol>
+                    <li><strong>Добавить</strong> – добавить все товары с сайта Rossko в список</li>
+                    <li><strong>Просмотр</strong> – посмотреть список товаров, которые попадут в документ</li>
+                    <li><strong>Отправить</strong> – наименовать документ и отправить данные на сервер</li>
+                </ol>
+                
+                <div class="highlight">
+                    <p>⚠️ Перед использованием убедитесь, что вы находитесь на нужной странице сайта.
+                        <b>Иначе расширение не работает!!!</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Окно редакта -->
+    <div class="edit-overlay" id="editOverlay">
+        <div class="edit-content">
+            <button class="close-edit" id="closeEdit"><b>⤷</b></button>
+            <h2 class="edit-title">СПИСОК ТОВАРОВ</h2>
+            <!-- <button class="reset-edit" id="resetEdit"><b>↺</b></button> -->
+            <div class="edit-table">
+                <div class="scroll-table">
+                    <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="word">Фирма</div>
+                                    <hr class="divider">
+                                    <div class="word">Код</div>
+                                </th>
+                                <th>Кол-во</th>
+                                <th>Цена</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    </div>
+                    <div class="scroll-table-body">
+                        <div class="table-wrapper-body">
+                        <table>
+                            <tbody id="tableBody">
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Отправка -->
+    <div class="send-overlay" id="sendOverlay">
+        <div class="send-content">
+            <button class="close-send" id="closeSend"><b>⤷</b></button>
+            <h2 class="send-title">ОТПРАВКА НА СЕРВЕР</h2>
+            <label for="limited-input">Введите наименование док-та: <span id="char-counter">0 / 80</span></label>
+            <input type="text" id="limited-input" placeholder="Наличие названия обязательно" value=""/>
+            <hr class="divider-send">
+            <label for="area-input">Введите описание док-та:</label>
+            <textarea type="text" id="area-input" placeholder="Описание не обязательное" value=""></textarea>
+            <button class="btn btn-send-to-server" id="send-to-server">Отправить на сервер</button>
+        </div>
+    </div>
+    
+    <!-- плашка "некорректный сайт" -->
+    <div id="BadtoastNotification" class="bad-toast-notification">
+        <span class="toast-message">txt</span>
+    </div>
+    
+    <!-- Товары очищены -->
+    <div id="GoodtoastNotification" class="good-toast-notification">
+        <span class="toast-message">txt</span>
+    </div>
+
+    <!-- Предупреждение -->
+    <div id="WarntoastNotification" class="warn-toast-notification">
+        <span class="toast-message">txt</span>
+    </div>
+    
+    <script type="module" src="popup.js"></script>
+</body>
+</html>

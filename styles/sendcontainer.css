@@ -1,0 +1,185 @@
+.send-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.send-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+.send-content {
+    background-color: white;
+    border-radius: 11px;
+    width: 100%;
+    max-width: 333px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 10px 33px rgba(0, 0, 0, 0.3);
+    transform: translateX(13px);
+    transition: transform 0.4s ease;
+}
+
+.send-overlay.active .send-content {
+    transform: translateX(0);
+}
+
+.close-send {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.close-send:hover {
+    background-color: #e60000;
+    color: white;
+}
+
+.reset-send {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.reset-send:hover {
+    background-color: #e60000;
+    color: white;
+}
+
+#area-input {
+    width: 100%;
+    height: 150px;
+    padding: 4px;
+    font-size: 16px;
+    font-family: monospace; /* опционально: фиксированная ширина символов */
+    border: 2px solid #ccc;
+    border-radius: 1px;
+    resize: none; /* запрещает пользователю менять размер */
+    box-sizing: border-box;
+
+    /* Ключевое: выравнивание текста слева сверху */
+    text-align: left;
+    vertical-align: top;
+}
+
+#limited-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 4px;
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+#limited-input-descrypt {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 150px;
+    padding: 4px;
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+span #char-counter {
+    font-size: 14px;
+    color: #555;
+}
+
+.send-title {
+    color: #e60000;
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.send-steps {
+    line-height: 1.5;
+    color: #333;
+    margin: 13px 0;
+    font-size: 12px;
+}
+
+.send-steps ol {
+    padding-left: 13px;
+    margin: 10px 0;
+}
+
+.send-steps li {
+    margin-bottom: 7px;
+}
+
+.highlight {
+    background-color: #fff2f2;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 13px 0;
+    border-left: 3px solid #ff4500;
+    font-size: 12px;
+}
+
+@media (max-width: 320px) {
+    .send-content {
+        padding: 10px;
+        min-width: 270px;
+        max-width: 280px;
+    }
+}
+
+.divider-send {
+    /* align-items: center; */
+    width: 100%;          /* Ширина линии (адаптируется под контент) */
+    height: 1px;         /* Толщина линии */
+    background: #808080;    /* Серый цвет (#808080 = "gray" в CSS) */
+    border-top: 12px;
+    border-bottom: 6px;        /* Убираем стандартные стили <hr> */
+    margin: auto;              /* Сбрасываем отступы браузера */
+    text-align: center; 
+    /* background: linear-gradient(
+        to right,
+        transparent,
+        #808080 10%,
+        #808080 90%,
+        transparent
+    ) */
+}

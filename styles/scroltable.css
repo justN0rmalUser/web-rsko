@@ -1,0 +1,106 @@
+.scroll-table-body {
+	height: 230px;
+	overflow-x: auto;
+	margin-top: 0px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #eee;
+}
+.table-wrapper {
+    overflow-y: auto;      /* вертикальный скролл */
+    max-height: 400px;     /* ограничение высоты */
+    scrollbar-gutter: stable; /* 🔑 КЛЮЧЕВОЕ СВОЙСТВО: резервирует место под скроллбар */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.table-wrapper-body {
+    overflow-y: scroll;      /* вертикальный скролл */
+    max-height: 400px;     /* ограничение высоты */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.scroll-table table {
+	width:100%;
+	table-layout: fixed;
+	border: none;
+}
+.scroll-table thead th {
+    font-weight: bold;
+	text-align: center;
+	border: none;
+	padding: 10px 15px;
+	background: #d8d8d8;
+	font-size: 10px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+.scroll-table tbody td {
+	text-align: left;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 10px;
+	vertical-align: top;
+}
+.scroll-table tbody tr:nth-child(even){
+	background: #f3f3f3;
+}
+ 
+::-webkit-scrollbar {
+    width: 14px;  /* Вертикальный */
+    height: 14px; /* Горизонтальный (если нужен) */
+}
+
+/* Фоновая дорожка скроллбара */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 7px;
+    margin: 5px; /* Отступ от краёв (только в Chrome 101+) */
+}
+
+/* Ползунок (бегунок) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #6c757d, #495057);
+    border-radius: 7px;
+    border: 3px solid #f1f1f1; /* Отступ от дорожки через "бордюр" */
+    min-height: 40px; /* Минимальная высота ползунка */
+}
+
+/* При наведении на ползунок */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #5a6268, #343a40);
+}
+
+/* Активное состояние (при перетаскивании) */
+::-webkit-scrollbar-thumb:active {
+    background: #212529;
+}
+
+/* ===== ПОДДЕРЖКА FIREFOX (стандарт CSS) ===== */
+html {
+    scrollbar-width: thin;          /* thin | auto | thick */
+    scrollbar-color: #6c757d #f1f1f1; /* thumb цвет | track цвет */
+}
+
+.word {
+    font-size: 10px;
+    hyphens: auto;
+    width: 100%;               /* Или фиксированная ширина, например 300px */
+    word-break: break-word;
+    /* margin: 1.5rem 0; */
+}
+.divider {
+    /* align-items: center; */
+    width: 110%;          /* Ширина линии (адаптируется под контент) */
+    height: 1px;         /* Толщина линии */
+    background: #808080;    /* Серый цвет (#808080 = "gray" в CSS) */
+    border: none;        /* Убираем стандартные стили <hr> */
+    margin: auto;              /* Сбрасываем отступы браузера */
+    text-align: center; 
+    background: linear-gradient(
+        to right,
+        transparent,
+        #808080 10%,
+        #808080 90%,
+        transparent
+    )
+}
