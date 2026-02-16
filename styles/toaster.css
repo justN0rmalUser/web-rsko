@@ -122,3 +122,36 @@
     visibility: visible;
     animation: toastFadeOut 0.3s ease-in forwards;
 }
+
+.blue-toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* начальное положение */
+    background-color: rgb(95, 239, 236);
+    color: #0210cf;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-color: #106fdb;
+    box-shadow: 0 4px 12px rgba(0, 15, 230, 0.4);
+    z-index: 10000;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 200px;
+    text-align: center;
+    cursor: default;
+
+    /* Скрыто по умолчанию */
+    opacity: 0;
+    visibility: hidden;
+}
+
+.blue-toast-notification.show {
+    visibility: visible;
+    animation: toastBounceIn 0.6s ease-out forwards;
+}
+
+.blue-toast-notification.hiding {
+    visibility: visible;
+    animation: toastFadeOut 0.3s ease-in forwards;
+}

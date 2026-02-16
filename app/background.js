@@ -1,12 +1,13 @@
-const url = "http://localhost:5050/data/";
-const SERVER_URL = "http://127.0.0.1:5050/data";
+const SERVER_URL = "http://127.0.0.1:5050/data"; // FIXME
+const AUTH = null; // FIXME
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'sendData') {
-        req().then(result => sendResponse({success: true, answer: result}))
-        // send(request.name, request.descryption, )
-        //     .then(result => sendResponse({ success: true, answer: result }))
-        //     .catch(error => sendResponse({ success: false, error: error.message }));
+        // req().then(result => sendResponse({success: true, answer: result}))
+        send(request.name, request.description, request.data)
+            .then(result => sendResponse({ success: true, answer: result }))
+            .catch(error => sendResponse({ success: false, error: error.message }));
         return true; // Указывает Chrome, что ответ асинхронный
     }
 });
@@ -14,16 +15,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function send(_name, _descrypt, _data) {
     // Валидация входных данных
     try {
-        const response = await fetch(url, {
+        const response = await fetch(SERVER_URL, {
             method: 'POST',
             headers: {
-                'auth': null, // FIXME
+                'auth': AUTH, 
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 name: _name,
                 descryption: _descrypt,
-                productList: _data
+                products: _data
             }),
             mode: 'cors', // Явное указание режима CORS
             credentials: 'omit' // Не отправлять куки (безопаснее для локального сервера)
@@ -55,15 +56,15 @@ async function send(_name, _descrypt, _data) {
     }
 }
 
-async function req() {
-    const response = await fetch(SERVER_URL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        a = await response.json()
-        return a
-    }
-}
+// async function req() {
+//     const response = await fetch(SERVER_URL, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     });
+//     if (response.ok) {
+//         a = await response.json()
+//         return a
+//     }
+// }

@@ -6,7 +6,6 @@ import { getTab } from './modules/setConstants.js';
 const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; // FIXME
 const MAX_LENGTH = 80;
 const SERVER_URL = "http://127.0.0.1:5050";
-const AUTH = null; // FIXME
 
 var gds = createPartsList();
 var have_elements = gds ? true : false;
@@ -163,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.runtime.sendMessage({ 
             action: "sendData",
             name: docname, 
-            descryption: docdesc,
-            productList: gds
+            description: docdesc,
+            data: gds
         }, (response) => {
                 // Обязательная проверка ошибок!
                 if (chrome.runtime.lastError) {
@@ -174,9 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 console.log("Ответ от фонового скрипта:", response);
-                // Обработка ответа
+                console.log(response.status);
+                response.success ? showToast("Документ создан. Проверяйте <b>AutoDealer</b>!", "blue", 3000) : showToast("Ошибка создания документа!", "red", 3000);
             }
-        );
+        )
 
         localStorage.clear();
         have_elements = false;
@@ -184,11 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         inputName.value = '';
         inputDescript.value = '';
+        counterName.innerText = '0 / 80';
 
         sendContainer.classList.remove('active');
         document.body.style.overflow = 'auto';
 
-        showToast("Отлично! Запрос выполнен, ожидайте документ на сервере", "green", 1500) ;
+        // showToast("Отлично! Запрос выполнен, ожидайте документ на сервере", "green", 1500) ;
     })
     
     closeEditor.addEventListener('click', () => {
@@ -239,6 +240,9 @@ function showToast(HTMLmessage, color, duration=1500) {
             break;
         case "yellow":
             toast = document.querySelector('.warn-toast-notification');
+            break;
+        case "blue":
+            toast = document.querySelector('.blue-toast-notification');
             break;
         default:
             toast = document.querySelector('.bad-toast-notification');
