@@ -16,5 +16,8 @@
         "alarms",
         "storage"
     ],
-    "host_permissions": ["https://*.rossko.ru/*", "https://rossko.ru/*"]
+    "host_permissions": ["https://*.rossko.ru/*", "https://rossko.ru/*", "http://localhost:5050/data", "http://127.0.0.1:5050"],
+    "background": {
+        "service_worker": "app/background.js"
+    }
 }

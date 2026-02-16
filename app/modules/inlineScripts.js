@@ -25,7 +25,7 @@ export function aggregate(block) {
         brandEl+"$",
         "$"+partNumberEl+"$",
         "$"+countEl+"$",
-        "$"+overpriceEl+"$$"
+        "$"+overpriceEl+"!"
         // "$"+defaultPriceEl+"$",
     ];
     return newArray;

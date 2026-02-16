@@ -1,20 +1,16 @@
 import { getCart } from './modules/inlineScripts.js';
+import { anyElement, str_to_obj, ROWCELLS } from './modules/utils.js';
+import { getTab } from './modules/setConstants.js';
 
 
 const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; // FIXME
 const MAX_LENGTH = 80;
-const ROWCELLS = `<tr>
-    <td>
-        <div class="word">$firm</div>
-        <hr class="divider">
-        <div class="word">$code</div>
-    </td>
-    <td>$count</td>
-    <td>$price</td>
-</tr>
-`;
+const SERVER_URL = "http://127.0.0.1:5050";
+const AUTH = null; // FIXME
 
-var have_elements = false;
+var gds = createPartsList();
+var have_elements = gds ? true : false;
+
 let toastTimeout = null;
 let hideTimeout = null;
 
@@ -32,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputName = document.getElementById('limited-input');
     const inputDescript = document.getElementById('area-input');
     const counterName = document.getElementById('char-counter');
-    const sendServer = document.getElementById("send-to-server");
+    const sendServer = document.getElementById('send-to-server');
 
     const helpBtn = document.getElementById('helpBtn');
     const tutorialOverlay = document.getElementById('tutorialOverlay');
@@ -67,31 +63,29 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     btnAdd.addEventListener('click', async () => {
         try {
-            const tabs = await chrome.tabs.query({
-                active: true,
-                currentWindow: true
-            }); 
-            const tab = tabs[0];
+            // установка начальных значений
+            const tab = await getTab() 
             
             // Проверка правильности вкладки
             if (tab.url !== REQUIRED_URL || !tab) {
                 showToast(`Это не корзина <b>Rossko</b>!`, "red", 3000);
                 return;
             }
-            
-            localStorage.clear();
 
-            // Список распаршенных товаров
+            // Обработка полученных данных
+            localStorage.clear();
             await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: () => document.documentElement.outerHTML
-            })
-            .then(async (rawHTML) => {
+            }).then(async (rawHTML) => {
                 const res = getCart(rawHTML[0].result);
+                
                 localStorage.setItem("goods_import", res);
                 localStorage.setItem("goods_list", res);
-                showToast("Список товаров обновлён.", "green");
-            })
+                
+                gds = createPartsList();
+                have_elements = true;
+            }).finally(() => showToast("Список товаров обновлён.", "green"))
 
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
@@ -104,34 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     btnEdit.addEventListener('click', async () => {
         try {
-            var gds = localStorage.getItem("goods_list");
+            // Установка значений
+            let inner = ``;
             
-            if (anyElement(gds)) {
-                gds = gds?.replaceAll("$$,", "$")
-                    ?.replaceAll("$,$", "$")
-                    ?.replaceAll(",", ".")
-                    ?.replaceAll("$$", "");
-            
-                gds = gds.split("$");
+            // Обработка
+            for (var product of gds) {
+                console.log(product);
+                inner += ROWCELLS.replace("$firm", product.brand)
+                    .replace("$code", product.code)
+                    .replace("$price", product.price)
+                    .replace("$count", product.count);
             }
 
+            // Отображение страницы
+            tBody.innerHTML = inner;
             editContainer.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            if (anyElement(gds)) {
-                let innerHTML = ``;
-                for (var i=0; i+3 < gds.length; i+=4) {
-                    innerHTML += ROWCELLS
-                        .replace("$firm", gds[i])
-                        .replace("$code", gds[i+1])
-                        .replace("$count", gds[i+2])
-                        .replace("$price", gds[i+3])
-                }
-                tBody.innerHTML = innerHTML;
-                have_elements = true;
-            }
-            
-
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
             alert(`Ошибка: ${err.message}`);
@@ -142,19 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
     Заполнение формы
     */
     btnSend.addEventListener('click', () => {
+        // Отображение страницы
         sendContainer.classList.add('active');
         document.body.style.overflow = 'hidden';
     });
 
-
+    /* 
+    Ввод имени и описания соответственно
+    */
     inputName.addEventListener('input', (event) => {
-        console.log(event.target.value)
-        inputName.value = event.target.value;
-
         if (event.target.value.length > MAX_LENGTH) {
             inputName.value = event.target.value.substring(0, MAX_LENGTH);
             showToast("Буфер <b>не может быть</b> превышен!", "yellow", 1000);
         }
+        inputName.value = event.target.value;
         counterName.innerText = `${inputName.value.length} / 80`;
     });
 
@@ -162,8 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
         inputDescript.value = event.target.value;
     })
 
-    sendServer.addEventListener('click', () => {
-        if (!inputName.value) {
+    /* 
+    Отправка на сервер непосредственно
+    */
+    sendServer.addEventListener('click', async () => {
+        const docname = inputName.value.trim()
+        const docdesc = inputDescript.value.trim()
+        if (!docname) {
             showToast("Наименование <b>не может быть</b> пустым!", "yellow", 1000);
             return
         }
@@ -172,33 +160,39 @@ document.addEventListener('DOMContentLoaded', () => {
             return
         }
 
-        // chrome.runtime.sendMessage(
-        //     { action: "sendData", name: inputName.value, descryption: inputDescript.value }, (response) => {
-        //         // Обязательная проверка ошибок!
-        //         if (chrome.runtime.lastError) {
-        //             onsole.error("Ошибка связи с фоновым скриптом:", 
-        //             chrome.runtime.lastError.message);
-        //             return;
-        //         }
-                
-        //         console.log("Ответ от фонового скрипта:", response);
-        //         // Обработка ответа
-        //     }
-        // );
+        chrome.runtime.sendMessage({ 
+            action: "sendData",
+            name: docname, 
+            descryption: docdesc,
+            productList: gds
+        }, (response) => {
+                // Обязательная проверка ошибок!
+                if (chrome.runtime.lastError) {
+                    console.error("Ошибка связи с фоновым скриптом:", 
+                    chrome.runtime.lastError.message);
+                    return;
+                }
+
+                console.log("Ответ от фонового скрипта:", response);
+                // Обработка ответа
+            }
+        );
+
+        localStorage.clear();
+        have_elements = false;
+        gds = [];
+
+        inputName.value = '';
+        inputDescript.value = '';
 
         sendContainer.classList.remove('active');
         document.body.style.overflow = 'auto';
 
         showToast("Отлично! Запрос выполнен, ожидайте документ на сервере", "green", 1500) ;
-
-        localStorage.clear();
-        tBody.innerHTML = '';
-        have_elements = false;
-        inputName.value = null;
-        inputDescript.value = null;
     })
     
     closeEditor.addEventListener('click', () => {
+        tBody.innerHTML = "";
         editContainer.classList.remove('active');
         document.body.style.overflow = 'auto';
     });
@@ -209,30 +203,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function anyElement(arr) {
-    switch (typeof(arr)) {
-        case "object":
-            if (arr) {
-                let result = 0;
-                for (var obj of arr) {
-                    result += anyElement(obj);
-                }
-                return result;
-            } else {
-                return 0
-            }
-        case "number":
-            return 1;
-        case "string":
-            return arr ? 1 : 0
-        case "bigint":
-            return 1;
-        case "symbol":
-            return arr ? 1 : 0
-        default:
-            return 0
-    }
+function createPartsList() {
+    const rawGds = localStorage.getItem("goods_list");
+    return str_to_obj(rawGds);
 }
+
+// async function sendData(_name, _desc, _data) {
+//     return await fetch(SERVER_URL, {
+//         method: 'POST',
+//         headers: { 
+//             'auth': AUTH,
+//             'Content-Type': 'application/json' 
+//         },
+//         body: JSON.stringify({
+//             name: _name,
+//             description: _desc,
+//             productList: _data
+//         }),
+//         credentials: 'omit' // Не отправлять куки (безопаснее для локального сервера)
+//     });
+// }
 
 function showToast(HTMLmessage, color, duration=1500) {
     // Отменяем все предыдущие действия

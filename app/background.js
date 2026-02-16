@@ -1,5 +1,5 @@
-const url = "http://localhost:5050/data";
-
+const url = "http://localhost:5050/data/";
+const SERVER_URL = "http://127.0.0.1:5050/data";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'sendData') {
@@ -11,20 +11,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-async function send(name, descrypt, ) {
+async function send(_name, _descrypt, _data) {
     // Валидация входных данных
-    if (typeof data !== 'object' || data === null) {
-        throw new TypeError('Аргумент "data" должен быть объектом');
-    }
-
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'auth': null, // TODO
+                'auth': null, // FIXME
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+                name: _name,
+                descryption: _descrypt,
+                productList: _data
+            }),
             mode: 'cors', // Явное указание режима CORS
             credentials: 'omit' // Не отправлять куки (безопаснее для локального сервера)
         });
@@ -40,6 +40,8 @@ async function send(name, descrypt, ) {
         if (!contentType?.includes('application/json')) {
             throw new TypeError('Сервер не вернул JSON в ответе');
         }
+
+        // Возврат ответа
         return await response.json();
     } catch (error) {
         // Детальное логирование для отладки
@@ -54,13 +56,14 @@ async function send(name, descrypt, ) {
 }
 
 async function req() {
-    const response = await fetch("https://cat-fact.herokuapp.com/facts/random", {
+    const response = await fetch(SERVER_URL, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
     });
     if (response.ok) {
-        console.log(response.json())
+        a = await response.json()
+        return a
     }
 }
