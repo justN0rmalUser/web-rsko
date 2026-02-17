@@ -31,7 +31,8 @@ export function str_to_obj(data) {
                     propertiesList[0], 
                     propertiesList[1], 
                     propertiesList[2],
-                    propertiesList[3]
+                    propertiesList[3],
+                    propertiesList[4]
                 );
                 console.log(prod);
                 result.push(prod);
@@ -45,7 +46,7 @@ export function str_to_obj(data) {
     }
 }
 
-export const ROWCELLS = `<tr>
+export const ROWCELLS = `<tr $id>
     <td>
         <div class="word">$firm</div>
         <hr class="divider">
@@ -57,10 +58,16 @@ export const ROWCELLS = `<tr>
 `;
 
 export class Product {
-    constructor(brand, code, count, price) {
+    constructor(id, brand, code, count, price) {
+        this.id = id;
         this.brand = brand;
         this.code = code;
         this.count = count;
         this.price = price;
     }
+}
+
+export function toIterable(obj) {
+    if (!obj) return [];
+    else return obj;
 }

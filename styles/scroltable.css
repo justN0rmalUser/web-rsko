@@ -104,3 +104,14 @@ html {
         transparent
     )
 }
+
+tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+tr:hover {
+    background-color: #ffc6d5 !important;
+}
+
+/* Убедитесь, что курсор указывает на интерактивность */

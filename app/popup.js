@@ -1,5 +1,5 @@
 import { getCart } from './modules/inlineScripts.js';
-import { anyElement, str_to_obj, ROWCELLS } from './modules/utils.js';
+import { anyElement, toIterable, ROWCELLS } from './modules/utils.js';
 import { getTab } from './modules/setConstants.js';
 
 
@@ -7,8 +7,7 @@ const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; 
 const MAX_LENGTH = 80;
 const SERVER_URL = "http://127.0.0.1:5050";
 
-var gds = createPartsList();
-var have_elements = gds ? true : false;
+var gds = getPartsList();
 
 let toastTimeout = null;
 let hideTimeout = null;
@@ -20,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     const editContainer = document.getElementById('editOverlay');
     const closeEditor = document.getElementById('closeEdit');
+    const resetEditor = document.getElementById('resetEdit');
     const tBody = document.getElementById('tableBody');
 
     const sendContainer = document.getElementById('sendOverlay');
@@ -82,13 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem("goods_import", res);
                 localStorage.setItem("goods_list", res);
                 
-                gds = createPartsList();
-                have_elements = true;
+                gds = getPartsList();
             }).finally(() => showToast("Список товаров обновлён.", "green"))
 
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
             alert(`Ошибка: ${err.message}`);
+            listClear();
         }
     });
     
@@ -98,24 +98,28 @@ document.addEventListener('DOMContentLoaded', () => {
     btnEdit.addEventListener('click', async () => {
         try {
             // Установка значений
-            let inner = ``;
             
             // Обработка
-            for (var product of gds) {
-                console.log(product);
-                inner += ROWCELLS.replace("$firm", product.brand)
-                    .replace("$code", product.code)
-                    .replace("$price", product.price)
-                    .replace("$count", product.count);
+            if (gds.length) {
+                renderList();
             }
-
+            
             // Отображение страницы
-            tBody.innerHTML = inner;
+            tBody.addEventListener('click', handleClick);
+
             editContainer.classList.add('active');
             document.body.style.overflow = 'hidden';
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
             alert(`Ошибка: ${err.message}`);
+            listClear();
+        }
+    });
+
+    resetEditor.addEventListener('click', async () => {
+        gds = resetPartsList();
+        if (gds.length) {
+            renderList();
         }
     });
 
@@ -154,10 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast("Наименование <b>не может быть</b> пустым!", "yellow", 1000);
             return
         }
-        if (!have_elements) {
+        if (!gds.length) {
             showToast("Нет данных для отправки", "yellow", 1000);
             return
         }
+
 
         chrome.runtime.sendMessage({ 
             action: "sendData",
@@ -173,14 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 console.log("Ответ от фонового скрипта:", response);
-                console.log(response.status);
+                console.log(response.success);
                 response.success ? showToast("Документ создан. Проверяйте <b>AutoDealer</b>!", "blue", 3000) : showToast("Ошибка создания документа!", "red", 3000);
             }
         )
 
-        localStorage.clear();
-        have_elements = false;
-        gds = [];
+        listClear()
 
         inputName.value = '';
         inputDescript.value = '';
@@ -188,12 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sendContainer.classList.remove('active');
         document.body.style.overflow = 'auto';
-
-        // showToast("Отлично! Запрос выполнен, ожидайте документ на сервере", "green", 1500) ;
     })
     
     closeEditor.addEventListener('click', () => {
         tBody.innerHTML = "";
+        tBody.removeEventListener('click', handleClick);
         editContainer.classList.remove('active');
         document.body.style.overflow = 'auto';
     });
@@ -204,26 +206,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function createPartsList() {
-    const rawGds = localStorage.getItem("goods_list");
-    return str_to_obj(rawGds);
+function resetPartsList() {
+    const rawGds = localStorage.getItem("goods_import");
+    localStorage.setItem("goods_list", JSON.stringify(rawGds));
+    return toIterable(JSON.parse(rawGds));
 }
 
-// async function sendData(_name, _desc, _data) {
-//     return await fetch(SERVER_URL, {
-//         method: 'POST',
-//         headers: { 
-//             'auth': AUTH,
-//             'Content-Type': 'application/json' 
-//         },
-//         body: JSON.stringify({
-//             name: _name,
-//             description: _desc,
-//             productList: _data
-//         }),
-//         credentials: 'omit' // Не отправлять куки (безопаснее для локального сервера)
-//     });
-// }
+function getPartsList() {
+    const rawGds = localStorage.getItem("goods_list");
+    console.log(rawGds);
+    return toIterable(JSON.parse(rawGds));
+}
+
+function deleteItem(id) {
+    const len = gds.length;
+    for (var i=0; i < len; i++) {
+        if (gds[i].id === id) {
+            gds.splice(i, 1);
+            break;
+        }
+    }
+    localStorage.setItem("goods_list", JSON.stringify(gds));
+    gds = getPartsList();
+}
+
+function listClear() {
+    localStorage.clear();
+    gds = [];
+}
+
+
+function handleClick(event) {
+    var row = event.target.closest('tr');
+    console.log('Клик по строке:', row);
+    const body = document.querySelector('tbody'); 
+    body.removeChild(row);
+    deleteItem(row.id);
+}
+
+function renderList() {
+    let inner = ``;
+    for (var product of gds) {
+        console.log(product);
+        inner += ROWCELLS.replace("$id", `id="${product.id}"`)
+            .replace("$firm", product.brand)
+            .replace("$code", product.code)
+            .replace("$price", product.price)
+            .replace("$count", product.count);
+    }
+    const body = document.getElementById('tableBody');
+    body.innerHTML = inner;
+}
 
 function showToast(HTMLmessage, color, duration=1500) {
     // Отменяем все предыдущие действия
