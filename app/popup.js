@@ -1,11 +1,10 @@
 import { getCart } from './modules/inlineScripts.js';
-import { anyElement, toIterable, ROWCELLS } from './modules/utils.js';
+import { toIterable, ROWCELLS } from './modules/utils.js';
 import { getTab } from './modules/setConstants.js';
 
 
 const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; // FIXME
 const MAX_LENGTH = 80;
-const SERVER_URL = "http://127.0.0.1:5050";
 
 var gds = getPartsList();
 
@@ -97,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     btnEdit.addEventListener('click', async () => {
         try {
-            // Установка значений
-            
             // Обработка
             if (gds.length) {
                 renderList();
