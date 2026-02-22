@@ -3,7 +3,8 @@ import { toIterable, ROWCELLS } from './modules/utils.js';
 import { getTab } from './modules/setConstants.js';
 
 
-const REQUIRED_URL = "file:///C://Users//Danya//Desktop//tempFiles//rsko.html"; // FIXME
+const HOST_URL = "kuban.rossko.ru"; // FIXME
+const PATH_URL = "/cart/";
 const MAX_LENGTH = 80;
 
 var gds = getPartsList();
@@ -62,10 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAdd.addEventListener('click', async () => {
         try {
             // установка начальных значений
-            const tab = await getTab() 
+            const tab = await getTab(); 
+            const url = new URL(tab.url);
+            console.log(url);   
             
             // Проверка правильности вкладки
-            if (tab.url !== REQUIRED_URL || !tab) {
+            if (url.hostname !== HOST_URL || url.pathname !== PATH_URL) {
                 showToast(`Это не корзина <b>Rossko</b>!`, "red", 3000);
                 return;
             }
