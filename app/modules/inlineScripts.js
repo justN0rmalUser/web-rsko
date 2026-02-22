@@ -13,7 +13,11 @@ export function getCart(html_str) {
 }
 
 export function aggregate(block) {
+<<<<<<< HEAD
     const nameEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__name__px5+y')[0].innerText || null;
+=======
+    const nameEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__name__px5+y');
+>>>>>>> 2bf379b3fbc977f485b7daef53202972ebd1ddc3
     const brandEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__brand__eb6TV')[0].innerText || null;
     const partNumberEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__partsNumber__yDq9v')[0].innerText || null;
     const overpriceEl = block.getElementsByClassName('src-features-cart-components-CartItemNew-__style__overprice__C7Mb3')[0].innerText.replace(',', '.') || null;
