@@ -1,5 +1,5 @@
-const SERVER_URL = "http://127.0.0.1:5050/data"; // FIXME
-const AUTH = null; // FIXME
+const SERVER_URL = "http://127.0.0.1:8080/data"; // FIXME
+const AUTH = "437219047"; // FIXME
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -18,12 +18,12 @@ async function send(_name, _descrypt, _data) {
         const response = await fetch(SERVER_URL, {
             method: 'POST',
             headers: {
-                'auth': AUTH, 
+                'auth': AUTH,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 name: _name,
-                descryption: _descrypt,
+                description: _descrypt,
                 products: _data
             }),
             mode: 'cors', // Явное указание режима CORS
@@ -47,7 +47,7 @@ async function send(_name, _descrypt, _data) {
     } catch (error) {
         // Детальное логирование для отладки
         console.error('[Extension POST Error]', {
-            url,
+            SERVER_URL,
             timestamp: new Date().toISOString(),
             originalError: error.message,
             stack: error.stack
