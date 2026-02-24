@@ -13,7 +13,7 @@
     border-radius: 8px;
 }
 .table-wrapper-body {
-    overflow-y: scroll;      /* вертикальный скролл */
+    overflow-y: auto;      /* вертикальный скролл */
     max-height: 400px;     /* ограничение высоты */
     border: 1px solid #ddd;
     border-radius: 8px;
