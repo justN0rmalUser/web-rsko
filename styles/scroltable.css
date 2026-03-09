@@ -6,11 +6,13 @@
 	border-bottom: 1px solid #eee;
 }
 .table-wrapper {
-    overflow-y: auto;      /* вертикальный скролл */
-    max-height: 400px;     /* ограничение высоты */
-    scrollbar-gutter: stable; /* 🔑 КЛЮЧЕВОЕ СВОЙСТВО: резервирует место под скроллбар */
+    max-height: 400px;       /* Ограничение высоты */
+    overflow-y: overlay;        /* Скролл только при необходимости */
+    overflow-x: auto;        /* Горизонтальный скролл, если таблица широкая */
     border: 1px solid #ddd;
     border-radius: 8px;
+    
+    /* 🔑 ВАЖНО: Резервируем место под скроллбар, чтобы контент не прыгал */
 }
 .table-wrapper-body {
     overflow-y: auto;      /* вертикальный скролл */
@@ -18,69 +20,47 @@
     border: 1px solid #ddd;
     border-radius: 8px;
 }
+.scroll-table {
+    width: 100%;
+    border-collapse: collapse; /* Убираем двойные границы */
+    table-layout: fixed;       /* Фиксируем ширину колонок */
+}
 .scroll-table table {
 	width:100%;
 	table-layout: fixed;
 	border: none;
 }
 .scroll-table thead th {
+    position: sticky;          /* 🔑 МАГИЯ: Заголовок прилипает */
+    top: 0;                    /* Прилипает к самому верху */
+    z-index: 10;               /* Чтобы был поверх строк */
+    
     font-weight: bold;
-	text-align: center;
-	border: none;
-	padding: 10px 15px;
-	background: #d8d8d8;
-	font-size: 10px;
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
+    text-align: center;
+    padding: 10px 15px;
+    background: #d8d8d8;       /* Обязательно нужен фон, иначе строки будут просвечивать */
+    font-size: 10px;
+    border-bottom: 2px solid #ccc; /* Разделитель между шапкой и телом */
+    
+    /* Компенсация места под скроллбар внутри ячейки, если нужно */
+    padding-right: 20px; 
 }
 .scroll-table tbody td {
-	text-align: left;
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	padding: 10px 15px;
-	font-size: 10px;
-	vertical-align: top;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 10px;
+    vertical-align: top;
+    border-bottom: 1px solid #eee; /* Граница между строками */
 }
-.scroll-table tbody tr:nth-child(even){
-	background: #f3f3f3;
-}
+.scroll-table tbody tr:nth-child(even){ background: #f3f3f3; }
+tr { cursor: pointer; transition: background-color 0.2s ease; }
+tr:hover { background-color: #ffc6d5 !important; }
  
-::-webkit-scrollbar {
-    width: 14px;  /* Вертикальный */
-    height: 14px; /* Горизонтальный (если нужен) */
-}
-
-/* Фоновая дорожка скроллбара */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 7px;
-    margin: 5px; /* Отступ от краёв (только в Chrome 101+) */
-}
-
-/* Ползунок (бегунок) */
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #6c757d, #495057);
-    border-radius: 7px;
-    border: 3px solid #f1f1f1; /* Отступ от дорожки через "бордюр" */
-    min-height: 40px; /* Минимальная высота ползунка */
-}
-
-/* При наведении на ползунок */
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #5a6268, #343a40);
-}
-
-/* Активное состояние (при перетаскивании) */
-::-webkit-scrollbar-thumb:active {
-    background: #212529;
-}
-
-/* ===== ПОДДЕРЖКА FIREFOX (стандарт CSS) ===== */
-html {
-    scrollbar-width: thin;          /* thin | auto | thick */
-    scrollbar-color: #6c757d #f1f1f1; /* thumb цвет | track цвет */
-}
-
+::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 7px; margin: 5px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #6c757d, #495057); border-radius: 7px; border: 3px solid #f1f1f1; min-height: 40px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #5a6268, #343a40); }
+html { scrollbar-width: thin; scrollbar-color: #6c757d #f1f1f1; }
 .word {
     font-size: 10px;
     hyphens: auto;
