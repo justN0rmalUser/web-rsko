@@ -33,12 +33,20 @@ export function aggregate(block) {
     const getValue = (part, tag = '*', suffix = '') => {
         return findByClassPart(part, tag, suffix)?.value?.trim() || null;
     };
-    
+
+    const clearNumber = (strNum) => {
+        strNum = strNum?.replace(',', '.');
+        return parseFloat(strNum.replace(/[^0-9.]/g, ''));
+    };
+
     // 🔹 Извлекаем поля только по стабильным частям имён классов
+    var pric = new String(Math.ceil(clearNumber(getText('overprice')) / 5) * 5)
+    console.log(pric);
+
     const nameEl = getText('name__') || getText('name');
     const brandEl = getText('brand');
     const partNumberEl = getText('partsNumber', 'a') || getText('partsNumber');
-    const overpriceEl = String(Math.ceil(Number(getText('overprice')?.replace(',', '.') / 5)) * 5) || null;
+    const overpriceEl = pric || null;
     const countEl = getValue('input', '', '[readonly]') || '1';
 
     // Если нет ключевых данных — возвращаем null (как в оригинале при ошибке)
