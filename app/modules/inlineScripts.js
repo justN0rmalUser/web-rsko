@@ -41,7 +41,6 @@ export function aggregate(block) {
 
     // 🔹 Извлекаем поля только по стабильным частям имён классов
     var pric = new String(Math.ceil(clearNumber(getText('overprice')) / 5) * 5)
-    console.log(pric);
 
     const nameEl = getText('name__') || getText('name');
     const brandEl = getText('brand');

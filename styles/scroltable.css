@@ -7,7 +7,7 @@
 }
 .table-wrapper {
     max-height: 400px;       /* Ограничение высоты */
-    overflow-y: overlay;        /* Скролл только при необходимости */
+    overflow-y: auto;        /* Скролл только при необходимости */
     overflow-x: auto;        /* Горизонтальный скролл, если таблица широкая */
     border: 1px solid #ddd;
     border-radius: 8px;

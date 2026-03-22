@@ -18,6 +18,7 @@
     ],
     "host_permissions": ["https://*.rossko.ru/*", "https://rossko.ru/*", "http://localhost:5050/*", "http://127.0.0.1:8080/*"],
     "background": {
-        "service_worker": "app/background.js"
+        "service_worker": "app/background.js",
+        "type": "module"
     }
 }

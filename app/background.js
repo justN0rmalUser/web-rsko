@@ -1,5 +1,4 @@
-const SERVER_URL = "http://127.0.0.1:8080/data"; // FIXME
-const AUTH = "437219047"; // FIXME
+import { CONFIG } from "./modules/setConstants.js"; // SERVER_URL AUTH
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -15,10 +14,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function send(_name, _descrypt, _data) {
     // Валидация входных данных
     try {
-        const response = await fetch(SERVER_URL, {
+        const response = await fetch(CONFIG.SERVER_URL, {
             method: 'POST',
             headers: {
-                'auth': AUTH,
+                'auth': CONFIG.AUTH,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -47,7 +46,7 @@ async function send(_name, _descrypt, _data) {
     } catch (error) {
         // Детальное логирование для отладки
         console.error('[Extension POST Error]', {
-            SERVER_URL,
+            url: CONFIG.SERVER_URL,
             timestamp: new Date().toISOString(),
             originalError: error.message,
             stack: error.stack
@@ -55,16 +54,3 @@ async function send(_name, _descrypt, _data) {
         throw error; // Пробрасываем ошибку для обработки вызывающим кодом
     }
 }
-
-// async function req() {
-//     const response = await fetch(SERVER_URL, {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     });
-//     if (response.ok) {
-//         a = await response.json()
-//         return a
-//     }
-// }

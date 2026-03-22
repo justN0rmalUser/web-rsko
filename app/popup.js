@@ -1,11 +1,7 @@
 import { getCart } from './modules/inlineScripts.js';
 import { toIterable, ROWCELLS } from './modules/utils.js';
-import { getTab } from './modules/setConstants.js';
+import { getTab, CONFIG } from './modules/setConstants.js'; // конфиг: HOST_URL PATH_URL MAX_LENGTH
 
-
-const HOST_URL = "kuban.rossko.ru"; // FIXME
-const PATH_URL = "/cart/";
-const MAX_LENGTH = 80;
 
 var gds = getPartsList();
 
@@ -65,10 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // установка начальных значений
             const tab = await getTab(); 
             const url = new URL(tab.url);
-            console.log(url);   
             
             // Проверка правильности вкладки
-            if (url.hostname !== HOST_URL || url.pathname !== PATH_URL) {
+            if (url.hostname !== CONFIG.HOST_URL || url.pathname !== CONFIG.PATH_URL) {
                 showToast(`Это не корзина <b>Rossko</b>!`, "red", 3000);
                 return;
             }
@@ -136,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
     Ввод имени и описания соответственно
     */
     inputName.addEventListener('input', (event) => {
-        if (event.target.value.length > MAX_LENGTH) {
-            inputName.value = event.target.value.substring(0, MAX_LENGTH);
+        if (event.target.value.length > CONFIG.MAX_LENGTH) {
+            inputName.value = event.target.value.substring(0, CONFIG.MAX_LENGTH);
             showToast("Буфер <b>не может быть</b> превышен!", "yellow", 1000);
         }
         inputName.value = event.target.value;
@@ -172,13 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, (response) => {
                 // Обязательная проверка ошибок!
                 if (chrome.runtime.lastError) {
-                    console.error("Ошибка связи с фоновым скриптом:", 
-                    chrome.runtime.lastError.message);
+                    console.error("Ошибка связи с фоновым скриптом:", chrome.runtime.lastError.message);
                     return;
                 }
 
                 console.log("Ответ от фонового скрипта:", response);
-                console.log(response.success);
                 response.success ? showToast("Документ создан. Проверяйте <b>AutoDealer</b>!", "blue", 3000) : showToast("Ошибка создания документа!", "red", 3000);
             }
         )
@@ -214,7 +207,6 @@ function resetPartsList() {
 
 function getPartsList() {
     const rawGds = localStorage.getItem("goods_list");
-    console.log(rawGds);
     return toIterable(JSON.parse(rawGds));
 }
 
@@ -238,7 +230,6 @@ function listClear() {
 
 function handleClick(event) {
     var row = event.target.closest('tr');
-    console.log('Клик по строке:', row);
     const body = document.querySelector('tbody'); 
     body.removeChild(row);
     deleteItem(row.id);
@@ -247,7 +238,6 @@ function handleClick(event) {
 function renderList() {
     let inner = ``;
     for (var product of gds) {
-        console.log(product);
         inner += ROWCELLS.replace("$id", `id="${product.id}"`)
             .replace("$firm", product.brand)
             .replace("$code", product.code)
