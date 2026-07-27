@@ -4,7 +4,7 @@
     "version": "1.1.0",
     "description": "Создает калькуляцию в базе данных.",
     "icons": {
-        "64": "./icons/doc64.png"
+        "64": "./app/icons/doc64.png"
     },
     "action": {
         "default_popup": "app/popup.html"
@@ -16,7 +16,7 @@
         "alarms",
         "storage"
     ],
-    "host_permissions": ["https://*.rossko.ru/*", "https://rossko.ru/*", "http://localhost:5050/*", "http://127.0.0.1:8080/*"],
+    "host_permissions": ["https://kuban.rossko.ru/*", "https://rossko.ru/*", "http://localhost:5050/*", "http://127.0.0.1:8080/*"],
     "background": {
         "service_worker": "app/background.js",
         "type": "module"

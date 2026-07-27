@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem("goods_list", res);
                 
                 gds = getPartsList();
-            }).finally(() => showToast("Список товаров обновлён.", "green"))
+            }).then(() => showToast("Список товаров обновлён.", "green"))
 
         } catch(err) {
             console.error("❌ Ошибка:", err.message);
@@ -176,14 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         )
 
-        listClear()
+        if (response.success) {
+            listClear()
 
-        inputName.value = '';
-        inputDescript.value = '';
-        counterName.innerText = '0 / 80';
+            inputName.value = '';
+            inputDescript.value = '';
+            counterName.textContent = '0 / 80';
 
-        sendContainer.classList.remove('active');
-        document.body.style.overflow = 'auto';
+            sendContainer.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
     })
     
     closeEditor.addEventListener('click', () => {
@@ -201,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function resetPartsList() {
     const rawGds = localStorage.getItem("goods_import");
-    localStorage.setItem("goods_list", JSON.stringify(rawGds));
+    localStorage.setItem("goods_list", rawGds);
     return toIterable(JSON.parse(rawGds));
 }
 

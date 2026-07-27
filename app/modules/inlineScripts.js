@@ -36,7 +36,7 @@ export function aggregate(block) {
 
     const clearNumber = (strNum) => {
         strNum = strNum?.replace(',', '.');
-        return parseFloat(strNum.replace(/[^0-9.]/g, ''));
+        return parseFloat(strNum?.replace(/[^0-9.]/g, ''));
     };
 
     // 🔹 Извлекаем поля только по стабильным частям имён классов
