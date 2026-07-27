@@ -1,4 +1,4 @@
-import { getCart } from './modules/inlineScripts.js';
+import { extractCartFromPage } from './modules/inlineScripts.js';
 import { toIterable, ROWCELLS } from './modules/utils.js';
 import { getTab, CONFIG } from './modules/setConstants.js'; // конфиг: HOST_URL PATH_URL MAX_LENGTH
 
@@ -68,24 +68,72 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Обработка полученных данных
-            localStorage.clear();
-            await chrome.scripting.executeScript({
+            // Извлекаем данные непосредственно из живого DOM страницы.
+            const injectionResults = await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                func: () => document.documentElement.outerHTML
-            }).then(async (rawHTML) => {
-                const res = getCart(rawHTML[0].result);
-                
-                localStorage.setItem("goods_import", res);
-                localStorage.setItem("goods_list", res);
-                
-                gds = getPartsList();
-            }).then(() => showToast("Список товаров обновлён.", "green"))
+                func: extractCartFromPage
+            });
+            const parseResult = injectionResults?.[0]?.result;
+
+            const hasValidShape = parseResult
+                && Array.isArray(parseResult.products)
+                && Array.isArray(parseResult.errors)
+                && Number.isInteger(parseResult.meta?.foundRows)
+                && typeof parseResult.meta?.url === 'string';
+
+            if (!hasValidShape) {
+                console.error("[Cart Parse Error]", {
+                    reason: "INVALID_RESULT",
+                    result: parseResult
+                });
+                showToast("Парсер вернул некорректный результат.", "red", 3000);
+                return;
+            }
+
+            if (parseResult.meta.foundRows === 0) {
+                console.error("[Cart Parse Error]", {
+                    reason: "NO_CART_ROWS",
+                    meta: parseResult.meta
+                });
+                showToast("Товары не найдены. Возможно, изменилась разметка Rossko.", "red", 3000);
+                return;
+            }
+
+            const hasInvalidRows = parseResult.errors.length > 0
+                || parseResult.products.length !== parseResult.meta.foundRows;
+
+            if (hasInvalidRows) {
+                const problemCount = Math.max(
+                    parseResult.errors.length,
+                    parseResult.meta.foundRows - parseResult.products.length
+                );
+                console.error("[Cart Parse Error]", {
+                    reason: "INVALID_CART_ROWS",
+                    errors: parseResult.errors,
+                    meta: parseResult.meta
+                });
+                showToast(
+                    `Импорт отменён: проблемных позиций — <b>${problemCount}</b>.`,
+                    "red",
+                    3000
+                );
+                return;
+            }
+
+            const serializedProducts = JSON.stringify(parseResult.products);
+            localStorage.setItem("goods_import", serializedProducts);
+            localStorage.setItem("goods_list", serializedProducts);
+            gds = parseResult.products;
+
+            showToast(
+                `Список обновлён. Товаров: <b>${gds.length}</b>.`,
+                "green",
+                2000
+            );
 
         } catch(err) {
-            console.error("❌ Ошибка:", err.message);
-            alert(`Ошибка: ${err.message}`);
-            listClear();
+            console.error("❌ Ошибка импорта:", err);
+            showToast("Не удалось обновить список. Подробности в консоли.", "red", 3000);
         }
     });
     

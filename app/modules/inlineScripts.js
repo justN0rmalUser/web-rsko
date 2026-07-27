@@ -1,66 +1,141 @@
-export function getCart(html_str) {
-    var items = [];
-    
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html_str, 'text/html');
-    
-    // 🔹 Ищем контейнеры товаров по стабильным частям классов (без хешей)
-    const cartRows = doc.querySelectorAll('div[class*="CartItemNew"][class*="root"]');
-    
-    cartRows.forEach((block) => {
-        var aggregatedArray = aggregate(block);
-        if (aggregatedArray) {
-            items.push(aggregatedArray);    
+export function extractCartFromPage() {
+    const findFirst = (root, selectors) => {
+        for (const selector of selectors) {
+            const element = root.querySelector(selector);
+            if (element) return element;
         }
-    })
-    
-    // 🔹 Возвращаем ТОЧНО такой же формат, как было
-    return JSON.stringify(items);
-}
-
-export function aggregate(block) {
-    // 🔹 Вспомогательная функция: поиск элемента по стабильной части класса
-    const findByClassPart = (part, tag = '*', suffix = '') => {
-        return block.querySelector(`${tag}[class*="${part}"]${suffix}`);
-    };
-    
-    // 🔹 Безопасное получение текста
-    const getText = (part, tag = '*', suffix = '') => {
-        return findByClassPart(part, tag, suffix)?.innerText?.trim() || null;
-    };
-    
-    // 🔹 Безопасное получение value
-    const getValue = (part, tag = '*', suffix = '') => {
-        return findByClassPart(part, tag, suffix)?.value?.trim() || null;
+        return null;
     };
 
-    const clearNumber = (strNum) => {
-        strNum = strNum?.replace(',', '.');
-        return parseFloat(strNum?.replace(/[^0-9.]/g, ''));
+    const getText = (root, selectors) => {
+        return findFirst(root, selectors)?.textContent?.trim() || null;
     };
 
-    // 🔹 Извлекаем поля только по стабильным частям имён классов
-    var pric = new String(Math.ceil(clearNumber(getText('overprice')) / 5) * 5)
+    const parsePrice = (value) => {
+        if (!value) return null;
 
-    const nameEl = getText('name__') || getText('name');
-    const brandEl = getText('brand');
-    const partNumberEl = getText('partsNumber', 'a') || getText('partsNumber');
-    const overpriceEl = pric || null;
-    const countEl = getValue('input', '', '[readonly]') || '1';
+        const compactValue = String(value)
+            .replace(/[\s\u00A0\u202F₽]/g, '')
+            .replace(/[^\d,.-]/g, '');
 
-    // Если нет ключевых данных — возвращаем null (как в оригинале при ошибке)
-    if (!brandEl || !partNumberEl) return null;
+        if (!compactValue) return null;
 
-    const id = brandEl + "|" + partNumberEl + "|" + countEl + "|" + overpriceEl;
+        const lastComma = compactValue.lastIndexOf(',');
+        const lastDot = compactValue.lastIndexOf('.');
+        const decimalSeparator = Math.max(lastComma, lastDot);
+        const fractionLength = decimalSeparator >= 0
+            ? compactValue.length - decimalSeparator - 1
+            : 0;
 
-    const productList = {
-        id: id,
-        partName: nameEl,
-        brand: brandEl,
-        code: partNumberEl,
-        count: countEl,
-        price: overpriceEl
+        let normalizedValue;
+        if (decimalSeparator >= 0 && fractionLength > 0 && fractionLength <= 2) {
+            const integerPart = compactValue
+                .slice(0, decimalSeparator)
+                .replace(/[.,]/g, '');
+            const fractionPart = compactValue
+                .slice(decimalSeparator + 1)
+                .replace(/\D/g, '');
+
+            normalizedValue = `${integerPart}.${fractionPart}`;
+        } else {
+            normalizedValue = compactValue.replace(/[.,]/g, '');
+        }
+
+        const numericValue = Number(normalizedValue);
+        if (!Number.isFinite(numericValue) || numericValue <= 0) return null;
+
+        return Math.ceil(numericValue / 5) * 5;
     };
-    
-    return productList;
+
+    const cardSelectors = [
+        'div[class*="CartItemNew"][class*="root"]',
+        '[class*="CartItemNew"][class*="root"]'
+    ];
+    const cartRows = document.querySelectorAll(cardSelectors.join(','));
+
+    const products = [];
+    const errors = [];
+
+    cartRows.forEach((block, index) => {
+        const partName = getText(block, [
+            '[class*="CartItemNew"][class*="name__"]',
+            '[class*="name__"]',
+            '[class*="name"]'
+        ]);
+        const brand = getText(block, [
+            '[class*="CartItemNew"][class*="brand__"]',
+            '[class*="brand"]'
+        ]);
+        const code = getText(block, [
+            '[data-testid="partsNumber"] a',
+            '[data-testid="partsNumber"]',
+            'a[class*="partsNumber"]',
+            '[class*="partsNumber"]'
+        ]);
+        const rawPrice = getText(block, [
+            '[class*="CartItemNew"][class*="price__"]',
+            '[class*="overprice"]',
+            '[class*="price__"]'
+        ]);
+        const countInput = findFirst(block, [
+            'input[data-testid="input-counter"]',
+            'input[class*="CartItemNew"][class*="input"][readonly]',
+            'input[class*="input"][readonly]',
+            'input[class*="input"]',
+            'input[type="number"]'
+        ]);
+        const rawCount = countInput?.value?.trim() || null;
+
+        const parsedPrice = parsePrice(rawPrice);
+        const hasValidCountFormat = /^\d+$/.test(rawCount || '');
+        const parsedCount = hasValidCountFormat ? Number(rawCount) : NaN;
+        const invalidFields = [];
+
+        if (!partName) invalidFields.push('partName');
+        if (!brand) invalidFields.push('brand');
+        if (!code) invalidFields.push('code');
+        if (!Number.isSafeInteger(parsedCount) || parsedCount <= 0) {
+            invalidFields.push('count');
+        }
+        if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+            invalidFields.push('price');
+        }
+
+        if (invalidFields.length) {
+            errors.push({
+                row: index + 1,
+                fields: invalidFields,
+                raw: {
+                    partName,
+                    brand,
+                    code,
+                    count: rawCount,
+                    price: rawPrice
+                }
+            });
+            return;
+        }
+
+        const count = String(parsedCount);
+        const price = String(parsedPrice);
+        const id = `${brand}|${code}|${count}|${price}`;
+
+        products.push({
+            id,
+            partName,
+            brand,
+            code,
+            count,
+            price
+        });
+    });
+
+    return {
+        products,
+        errors,
+        meta: {
+            foundRows: cartRows.length,
+            url: location.href
+        }
+    };
 }

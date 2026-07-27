@@ -29,6 +29,9 @@
     box-shadow: 0 10px 33px rgba(0, 0, 0, 0.3);
     transform: translateX(13px);
     transition: transform 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .edit-overlay.active .edit-content {
@@ -86,6 +89,12 @@
     margin-bottom: 10px;
     font-size: 20px;
     text-align: center;
+    flex: 0 0 auto;
+}
+
+.edit-table {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .edit-steps {

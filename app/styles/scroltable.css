@@ -1,33 +1,19 @@
-.scroll-table-body {
-	height: 230px;
-	overflow-x: auto;
-	margin-top: 0px;
-	margin-bottom: 20px;
-	border-bottom: 1px solid #eee;
-}
 .table-wrapper {
-    max-height: 400px;       /* Ограничение высоты */
-    overflow-y: auto;        /* Скролл только при необходимости */
-    overflow-x: auto;        /* Горизонтальный скролл, если таблица широкая */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    
-    /* 🔑 ВАЖНО: Резервируем место под скроллбар, чтобы контент не прыгал */
-}
-.table-wrapper-body {
-    overflow-y: auto;      /* вертикальный скролл */
-    max-height: 400px;     /* ограничение высоты */
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
 .scroll-table {
     width: 100%;
-    border-collapse: collapse; /* Убираем двойные границы */
-    table-layout: fixed;       /* Фиксируем ширину колонок */
+    height: 100%;
+    min-height: 0;
 }
 .scroll-table table {
 	width:100%;
 	table-layout: fixed;
+    border-collapse: collapse;
 	border: none;
 }
 .scroll-table thead th {
